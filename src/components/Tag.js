@@ -2,30 +2,14 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import { useEffect } from 'react';
 import Spinner from './Spinner';
+import useGif from '../hooks/UseGif';
 
 const API_KEY  = process.env.REACT_APP_GIPHY_API_KEY;
 
 const Tag = () => {
-    const [gif,setGif] = useState('');
-    const [loading,setLoading]=useState(false);
-    const [tag,setTag] = useState('funny');
+    const[tag,setTag] = useState('funny');
 
-async function fetchData() {
-    setLoading(true);
-    const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=${tag}`;
-    const {data} = await axios.get(url);
-    const imageSource = data.data.images.fixed_height.url;
-    setGif(imageSource);
-    setLoading(false);
-}
-
-useEffect( () => {
-    fetchData();
-},[]);
-
-function clickHandler() {
-    fetchData();
-}
+    const {gif,loading,fetchData} = useGif(tag);
 
 function changeHandler(event) {
     setTag(event.target.value);
@@ -44,7 +28,7 @@ onChange={changeHandler}
 value={tag}
 />
 
-    <button onClick={clickHandler}
+    <button onClick={() => fetchData(tag)}
     className='w-9/12 bg-yellow-500 text-lg py-2 px-5 rounded-lg'
     >
          Generate 
